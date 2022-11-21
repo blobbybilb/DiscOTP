@@ -16,14 +16,14 @@ bot = discord.Bot()
 def user_has_permission(ctx: Ctx):
     return (ctx.author.guild_permissions.administrator
             or ctx.guild.get_role(data.get_allowed_role(ctx.guild.id)) in ctx.author.roles
-            or ctx.author.id == ctx.guild.owner.id)
+            )
 
 
 @bot.slash_command()
 async def code(ctx: Ctx, account: str):
     '''Generates a TOTP code for the given account'''
     if not user_has_permission(ctx):
-        return await ctx.response('You do not have permission to use this command.')
+        return await ctx.respond('You do not have permission to use this command.')
     try:
         totp = pyotp.TOTP(data.get(ctx.guild.id)[account])
     except KeyError:
@@ -38,7 +38,7 @@ async def code(ctx: Ctx, account: str):
 async def add(ctx: Ctx, account: str, secret: str):
     '''Adds an account'''
     if not user_has_permission(ctx):
-        return await ctx.response('You do not have permission to use this command.')
+        return await ctx.respond('You do not have permission to use this command.')
     data.add_account(ctx.guild.id, account, secret)
     return await ctx.respond(f"Added account `{account}`")
 
@@ -47,7 +47,7 @@ async def add(ctx: Ctx, account: str, secret: str):
 async def remove(ctx: Ctx, account: str):
     '''Remove an account'''
     if not user_has_permission(ctx):
-        return await ctx.response('You do not have permission to use this command.')
+        return await ctx.respond('You do not have permission to use this command.')
     data.remove_account(ctx.guild.id, account)
     return await ctx.respond(f"Account `{account}` removed")
 
@@ -66,7 +66,7 @@ async def set_allowed_role(ctx: Ctx, role: discord.Role):
 async def create(ctx: Ctx):
     '''Creates/Resets server's stored accounts'''
     if not user_has_permission(ctx):
-        return await ctx.response('You do not have permission to use this command.')
+        return await ctx.respond('You do not have permission to use this command.')
     data.create_guild(ctx.guild.id)
     await ctx.respond("Created/reset storage file for this guild")
 
@@ -75,9 +75,9 @@ async def create(ctx: Ctx):
 async def list(ctx: Ctx):
     '''Lists all accounts'''
     if not user_has_permission(ctx):
-        return await ctx.response('You do not have permission to use this command.')
+        return await ctx.respond('You do not have permission to use this command.')
     accounts = data.get(ctx.guild.id)
-    await ctx.respond(', '.join(accounts.keys()))
+    await ctx.respond(', '.join(accounts.keys()).replace(', --allowed_role--', '').replace('--allowed_role--', ''))
 
 
 # help command
@@ -98,4 +98,4 @@ Note: This bot is open source and can be self-hosted. More info at <https://gith
 '''
     )
 
-bot.run("MTA0MzcyMzg0OTU0OTc1ODQ4NA.G1pzVk.7B-Hp12CR_yb6KEoLrYskpaX_4Q683Fr5wxBgQ")
+bot.run("token")
