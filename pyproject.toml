@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "discotp"
+version = "0.1.0"
+description = "A Discord bot for generating and managing (shared) TOTPs."
+authors = ["blobbybilb <notablob@outlook.com>"]
+license = "GPLv3"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+discord-py-interactions = "^5.11.0"
+sqlitedict = "^2.1.0"
+pyotp = "^2.9.0"
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
