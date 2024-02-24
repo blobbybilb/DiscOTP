@@ -3,10 +3,9 @@ from time import time
 import interactions as d
 import data
 import pyotp
+from config import TOKEN
 
 client = d.Client()
-
-TOKEN = "MTIxMDcxNDQ1ODAyNDk3MjM1OA.GK6N8-.mWJ0Lkf36VmzAUxLkJac937fTsawTQ9jF2wWHQ"
 
 
 async def check_permissions(ctx: d.SlashContext) -> bool | None:
@@ -78,13 +77,13 @@ async def ensure_valid_secret(ctx: d.SlashContext, secret: str) -> str | None:
     try:
         return pyotp.TOTP(secret).now()
     except binascii.Error:
-        await ctx.send("Invalid secret!")
+        await ctx.send("Invalid secret! Please add a valid TOTP secret.")
         return None
 
 
 @d.listen()
 async def on_ready():
-    print(f"We're online! We've logged in as {client.app.name}.")
+    print(f"Online.")
 
 
 @d.slash_command(name="config", description="Configure the bot for your server.")
@@ -177,6 +176,9 @@ async def add_account(ctx: d.SlashContext, name: str, secret: str):
 
     account: data.Account = {"name": name, "secret": secret}
 
+    if not await ensure_valid_secret(ctx, secret):
+        return
+
     if data.add_account(server_id, account):
         await ctx.send(f"Account {name} added!")
     else:
@@ -205,6 +207,9 @@ async def update_account(ctx: d.SlashContext, name: str, new_secret: str):
     account = data.get_account(server_id, name)
     if account is None:
         await ctx.send(f"Account {name} does not exist!")
+        return
+
+    if not await ensure_valid_secret(ctx, new_secret):
         return
 
     account["secret"] = new_secret
@@ -275,13 +280,16 @@ async def totp(ctx: d.SlashContext, name: str):
 
     totp = pyotp.TOTP(account["secret"])
 
-    code = ensure_valid_secret(ctx, account["secret"])
+    code = await ensure_valid_secret(ctx, account["secret"])
     if code is None:
         return
 
     await ctx.send(
-        f"Code for {name}: __**{code}**__\n\nExpires in: {int(30 - time() % 30)} seconds"
+        f"Code for '{name}': __**{code}**__\nExpires in {int(30 - time() % 30)} seconds"
     )
 
 
 client.start(TOKEN)
+
+
+data.db.close()
