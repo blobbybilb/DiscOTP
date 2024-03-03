@@ -5,6 +5,8 @@ This is intended for when you need to share an account for something (I needed i
 
 Keep your recovery codes safe, don't rely completely on this bot. Things can go wrong with it, and you don't want to be locked out of your accounts.
 
+[Invite link](https://discord.com/oauth2/authorize?client_id=1210714458024972358&permissions=0&scope=bot)
+
 ### Security
 
 This bot is not designed to be extremely secure. It doesn't use end-to-end encryption, so if you use the public bot, you are trusting it with your TOTP secrets, and if it gets compromised, your accounts are at risk. I am not liable for any damages caused by using this bot.
