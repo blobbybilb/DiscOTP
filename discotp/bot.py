@@ -1,9 +1,9 @@
 import binascii
 from time import time
 import interactions as d
-import data
+import discotp.data as data
 import pyotp
-from config import TOKEN
+from discotp.config import TOKEN
 
 client = d.Client()
 
